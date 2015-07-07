@@ -22,3 +22,8 @@ src/test/resources/application.yml
 
 # Build folder
 build/
+
+# IntelliJ project files
+spring-data-cloudant.iws
+spring-data-cloudant.iml
+spring-data-cloudant.ipr
