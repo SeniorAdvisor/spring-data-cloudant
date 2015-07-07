@@ -1,0 +1,8 @@
+cloudant:
+  connectionTimeout: 2000
+  maxConnections: 100
+  url: YOUR_ACCOUNT_URL
+  accountName: ACCOUNT_NAME
+  username: API_KEY
+  password: API_password
+  db: CLOUDANT_DB_NAME

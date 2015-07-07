@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://repo.spring.io/plugins-release"
+        }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:bundlor-plugin:0.1.2'
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
+        classpath 'org.springframework.build.gradle:spring-io-plugin:0.0.3.RELEASE'
+        classpath 'org.slf4j:slf4j-simple:1.6.4'
+        classpath 'org.slf4j:slf4j-api:1.6.4'
+        classpath 'org.slf4j:slf4j-log4j12:1.6.4'
+    }
+}
+
+group 'org.springframework.data'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url "https://repo.spring.io/libs-snapshot" }
+    maven { url "https://repo.spring.io/plugins-release"}
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Framework
+    compile("org.springframework:spring-context-support:$springVersion") {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+    compile("org.springframework:spring-context:$springVersion") {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+    compile("org.springframework:spring-tx:$springVersion") {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+
+    // Spring Data
+    compile("org.springframework.data:spring-data-commons:${springDataCommonsVersion}") {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+
+    // Cloudant
+    compile group: 'com.cloudant', name: 'cloudant-client', version:'1.0.1'
+
+    // Spring Cloud
+    compile(group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version:'1.0.1.RELEASE') {
+        exclude group: "ch.qos.logback", module: "logback-classic"
+    }
+
+
+    //compile "org.aspectj:aspectjweaver:$aspectjVersion"
+    compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+
+    // Testing
+    testCompile("org.springframework:spring-test:$springVersion") {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+    testCompile "junit:junit:$junitVersion"
+    //testCompile "org.hamcrest:hamcrest-core:$hamcrestVersion"
+    //testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+
+    //testCompile "javax.annotation:jsr250-api:1.0", optional
+    testRuntime "log4j:log4j:$log4jVersion"
+    testCompile "org.apache.derby:derbyLocale_zh_TW:10.9.1.0"
+    testRuntime "org.slf4j:slf4j-log4j12:$slf4jVersion"
+
+    compile "org.springframework.data.build:spring-data-build-resources:$springDataBuildVersion@zip"
+}
