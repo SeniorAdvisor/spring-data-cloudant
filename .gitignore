@@ -16,3 +16,6 @@ hs_err_pid*
 
 # OSX file
 .DS_Store
+
+# Gradle project distribution
+.gradle/
