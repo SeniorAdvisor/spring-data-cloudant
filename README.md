@@ -43,3 +43,7 @@ Spring Data Cloudant Adapter
          </bean>
      </beans>
      ```%
+     
+- Setting projects in Spring-boot
+ 1. copy example `cp src/test/resources/application.yml.example src/test/resources/application.yml`
+ 2. fill correct account info in the file `application.yml` on test
