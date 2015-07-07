@@ -12,10 +12,13 @@
 hs_err_pid*
 
 # config file which auto load on test
-./src/test/resources/application.yml
+src/test/resources/application.yml
 
 # OSX file
 .DS_Store
 
 # Gradle project distribution
 .gradle/
+
+# Build folder
+build/
