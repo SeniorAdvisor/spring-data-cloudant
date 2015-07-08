@@ -53,14 +53,14 @@ Spring Data Cloudant Adapter
  1. copy example `cp src/test/resources/application.yml.example src/test/resources/application.yml`
  2. fill correct account info in the file `application.yml` on test
  Make a Cloudant account and create a test-context.xml file(path /src/test/java/resources/) with the following content:
-    ```yml
-    cloudant:
-      connectionTimeout: 2000
-      maxConnections: 100
-      url: YOUR_ACCOUNT_URL
-      accountName: ACCOUNT_NAME
-      username: API_KEY
-      password: API_password
-      db: CLOUDANT_DB_NAME
-    ```
+ ```yml
+ cloudant:
+   connectionTimeout: 2000
+   maxConnections: 100
+   url: YOUR_ACCOUNT_URL
+   accountName: ACCOUNT_NAME
+   username: API_KEY
+   password: API_password
+   db: CLOUDANT_DB_NAME
+ ```
 
