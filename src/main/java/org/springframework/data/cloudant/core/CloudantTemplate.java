@@ -24,6 +24,7 @@ import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.model.*;
 
 import com.google.gson.GsonBuilder;
+import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.data.cloudant.config.ICloudantConnector;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -152,8 +154,12 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     }
 
     @Override
-    public List<T> queryView(String view, boolean includeDocs, String startKey, String endKey, Class<T> entityClass) {
-        return database.view(view).startKey(startKey).endKey(endKey).query(entityClass);
+    public List<T> queryView(String view, boolean includeDocs, Object startKey, Object endKey, Class<T> entityClass) {
+        return database.view(view).startKey(startKey).endKey(endKey).includeDocs(includeDocs).query(entityClass);
+    }
+
+    public ViewResult queryViewByStartKey(String view, boolean includeDocs, Class<T> entityClass, Object[] startKey, Object[] endKey) {
+        return database.view(view).startKey(startKey).endKey(endKey).includeDocs(true).queryView(Object.class, Object.class, entityClass);
     }
 
     @Override
@@ -192,7 +198,18 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     }
 
     public void setUnmappedDataAdapter() {
-        GsonBuilder gsonBuilder = new GsonBuilder().registerTypeHierarchyAdapter(BaseDocument.class,new UnmappedDataAdapter());
+        setDataAdapter(null);
+    }
+
+    public void setDataAdapter(Map<Class<?>, Object> adapters) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDataAdapter());
+        gsonBuilder.registerTypeHierarchyAdapter(BaseDocument.class, new UnmappedDataAdapter());
+        if(adapters != null) {
+            for (Class<?> type : adapters.keySet()) {
+                gsonBuilder.registerTypeAdapter(type, adapters.get(type));
+            }
+        }
         gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         this.client.setGsonBuilder(gsonBuilder);
     }

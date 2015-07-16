@@ -147,6 +147,23 @@ public abstract class CloudantCrudRepository<T extends BaseDocument, ID extends 
         return wrapViewResult(viewResult, pageable);
     }
 
+    public Iterable<T> findByView(String view_name, Object startKey, Object endKey) {
+        return template.queryView(view_name, true, startKey, endKey, this.persistentClass);
+    }
+
+    public Iterable<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey) {
+        List<T> result = new ArrayList<T>();
+        ViewResult viewResult = template.queryViewByStartKey(view_name, true, this.persistentClass, startKey, endKey);
+        List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();
+        for (int i = 0; i < rows.size(); i++) {
+            T item = rows.get(i).getDoc();
+            item.getUnmappedFields().put("key", rows.get(i).getKey()); // For query from views
+            item.getUnmappedFields().put("value", rows.get(i).getValue());
+            result.add(item);
+        }
+        return result;
+    }
+
     private PageImpl<T> wrapViewResult(ViewResult viewResult, Pageable pageable) {
         List<T> result = new ArrayList<T>();
         List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();

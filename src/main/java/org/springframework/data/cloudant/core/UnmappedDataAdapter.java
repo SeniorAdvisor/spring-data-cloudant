@@ -25,6 +25,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 
+import org.joda.time.DateTime;
 import org.springframework.data.cloudant.core.model.BaseDocument;
 
 import java.io.IOException;
@@ -43,9 +44,9 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
     @Override
     public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                .registerTypeAdapter(DateTime.class, new DateTimeDataAdapter())
                 .create();
         T doc = gson.fromJson(json, typeOfT);
         Map<String, Object> unmapped = new HashMap<String, Object>();
@@ -64,7 +65,26 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
         nameList.add("doc_type");
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if(!nameList.contains(entry.getKey())) {
-                unmapped.put(entry.getKey(),  entry.getValue().getAsString());
+                if(entry.getValue().isJsonArray()){
+                    unmapped.put(entry.getKey(),  entry.getValue().getAsJsonArray());
+                }else if(entry.getValue().isJsonObject()){
+                    unmapped.put(entry.getKey(),  entry.getValue().getAsJsonObject());
+                }else if(entry.getValue().isJsonPrimitive()){
+                    JsonPrimitive v = entry.getValue().getAsJsonPrimitive();
+                    if(v.isBoolean()){
+                        unmapped.put(entry.getKey(),  v.getAsBoolean());
+                    }else if(v.isNumber()){
+                        unmapped.put(entry.getKey(),  v.getAsNumber());
+                    }else if(v.isString()){
+                        unmapped.put(entry.getKey(),  v.getAsString());
+                    }else if(v.isJsonNull()){
+                        unmapped.put(entry.getKey(),  null);
+                    }
+                }else if(entry.getValue().isJsonNull()) {
+                    unmapped.put(entry.getKey(), null);
+                }else {
+                    unmapped.put(entry.getKey(), entry.getValue().getAsString());
+                }
             }
 
         }

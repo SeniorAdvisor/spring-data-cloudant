@@ -58,7 +58,7 @@ public class CloudantTemplateTests {
 
     @Test
     public void saveUnMappedDataAdapter() throws Exception {
-        String id = "cars:fast-car";
+        String id = "cars:fast-car111 23";
         String name = "The Fast Car";
         tryRemoveObjectById(id, Car.class);
 
@@ -74,7 +74,7 @@ public class CloudantTemplateTests {
         car = (Car) template.findById(id, Car.class);
         assertNotNull(car);
         assertEquals(unmap.size(), car.getUnmappedFields().size());
-        assertEquals("VALUE", car.getUnmappedFields().get("TESTING").toString());
+        assertEquals("VALUE", car.getUnmappedFields().get("TESTING"));
     }
 
 

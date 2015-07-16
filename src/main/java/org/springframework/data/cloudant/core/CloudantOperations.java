@@ -44,7 +44,7 @@ public interface CloudantOperations<T extends BaseDocument> {
 
     List<T> findByIndex(String index, FindByIndexOptions query, Class<T> entityClass);
 
-    List<T> queryView(String view, boolean includeDocs, String startKey, String endKey, Class<T> entityClass);
+    List<T> queryView(String view, boolean includeDocs, Object startKey, Object endKey, Class<T> entityClass);
 
     boolean exists(String id);
 
