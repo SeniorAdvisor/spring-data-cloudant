@@ -13,6 +13,7 @@ hs_err_pid*
 
 # config file which auto load on test
 src/test/resources/application.yml
+src/test/resources/test-context.xml
 
 # OSX file
 .DS_Store
