@@ -70,12 +70,17 @@ public abstract class CloudantCrudRepository<T extends BaseDocument, ID extends 
 
     @Override
     public <S extends T> Iterable<S> save(Iterable<S> ses) {
-        return null;
+        ArrayList<S> list = new ArrayList<S>();
+        if(ses != null) {
+            for(S e: ses) {
+                list.add(e);
+            }
+        }
+        return template.save(list);
     }
 
     @Override
     public T findOne(ID id) {
-//        System.out.println(this.persistentClass.getName());
         T t = (T) template.findById(id, this.persistentClass);
         return t;
     }
