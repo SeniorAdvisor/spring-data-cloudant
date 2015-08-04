@@ -69,5 +69,14 @@ public class BaseDocument {
         this.unmappedFields = unmappedFields;
     }
 
-    public Map<String, Object> getUnmappedFields() { return unmappedFields;}
+    public Map<String, Object> getUnmappedFields() {
+        return unmappedFields;
+    }
+
+    public void addUnmappedField(String key, Object value) {
+        if (unmappedFields == null) {
+            unmappedFields = new HashMap<String, Object>();
+        }
+        unmappedFields.put(key,value);
+    }
 }
