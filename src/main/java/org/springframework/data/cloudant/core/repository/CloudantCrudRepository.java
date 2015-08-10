@@ -18,6 +18,7 @@
 
 package org.springframework.data.cloudant.core.repository;
 
+import com.cloudant.client.api.model.SearchResult;
 import com.cloudant.client.api.model.ViewResult;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,10 @@ public abstract class CloudantCrudRepository<T extends BaseDocument, ID extends 
 
     public Iterable<T> findByView(String view_name, Object startKey, Object endKey) {
         return template.queryView(view_name, true, startKey, endKey, this.persistentClass);
+    }
+
+    public SearchResult<T> search(String indexName, Integer limit, boolean includDocs, String query){
+        return template.search(indexName, limit, includDocs, query, this.persistentClass);
     }
 
     public Iterable<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey) {

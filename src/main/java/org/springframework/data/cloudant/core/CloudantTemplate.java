@@ -23,6 +23,7 @@ import com.cloudant.client.api.Database;
 import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.model.*;
 
+import com.cloudant.client.api.model.SearchResult;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEventPublisher;
@@ -160,6 +161,11 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
 
     public ViewResult queryViewByStartKey(String view, boolean includeDocs, Class<T> entityClass, Object[] startKey, Object[] endKey) {
         return database.view(view).startKey(startKey).endKey(endKey).includeDocs(true).queryView(Object.class, Object.class, entityClass);
+    }
+
+
+    public SearchResult<T> search(String indexName, Integer limit, boolean includeDocs, String query, Class<T> entityClass){
+        return database.search(indexName).limit(limit).includeDocs(includeDocs).querySearchResult(query, entityClass);
     }
 
     @Override
