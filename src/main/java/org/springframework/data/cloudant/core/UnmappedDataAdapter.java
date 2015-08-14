@@ -118,6 +118,7 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
 
         if(unmappedProperties != null) {
             for (Map.Entry<String, Object> entry : unmappedProperties.entrySet()) {
+                entry.setValue(entry.getValue().toString());
                 member.add(entry.getKey(), context.serialize(entry.getValue()));
             }
         }
