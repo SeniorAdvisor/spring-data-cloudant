@@ -49,16 +49,13 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
                 .registerTypeAdapter(DateTime.class, new DateTimeDataAdapter())
                 .create();
         T doc = gson.fromJson(json, typeOfT);
-        Map<String, Object> unmapped = new HashMap<String, Object>();
-        Field[] fields = doc.getClass().getDeclaredFields();
-        Method[] methods = typeOfT.getClass().getDeclaredMethods();
+        Map<String, Object> unmapped = new HashMap<>();
         ArrayList<String> nameList = new ArrayList();
 
         JsonObject object = json.getAsJsonObject();
-        for (Field field : fields) {
-            nameList.add(field.getName());
 
-        }
+        nameList = getNestedField(doc.getClass(), nameList);
+
         //add support for annotated fields ...hack for now
         nameList.add("_id");
         nameList.add("_rev");
@@ -124,6 +121,16 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
         }
         return member;
 
+    }
+
+    private ArrayList<String> getNestedField(Class<?> klass, ArrayList<String> nameList){
+        if (klass.getName() != BaseDocument.class.getName()) {
+            for(Field field : klass.getDeclaredFields()) {
+                nameList.add(field.getName());
+            }
+            return getNestedField(klass.getSuperclass(), nameList);
+        }
+        return nameList;
     }
 }
 
