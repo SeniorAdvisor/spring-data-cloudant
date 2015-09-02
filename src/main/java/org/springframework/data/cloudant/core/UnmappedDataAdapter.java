@@ -32,10 +32,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by justinsaul on 6/12/15.
@@ -43,18 +41,14 @@ import java.util.Set;
 public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializer<T>, JsonDeserializer<T> {
     @Override
     public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .registerTypeAdapter(DateTime.class, new DateTimeDataAdapter())
                 .create();
         T doc = gson.fromJson(json, typeOfT);
         Map<String, Object> unmapped = new HashMap<>();
-        ArrayList<String> nameList = new ArrayList();
-
+        List<String> nameList = getNestedField(doc.getClass());
         JsonObject object = json.getAsJsonObject();
-
-        nameList = getNestedField(doc.getClass(), nameList);
 
         //add support for annotated fields ...hack for now
         nameList.add("_id");
@@ -97,10 +91,10 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
         member.addProperty("_id", src.getId());
         member.addProperty("_rev", src.getRevision());
 
-        Field[] fields = src.getClass().getDeclaredFields();
-
+        ArrayList<Field> fields = new ArrayList();
+        fields = getNestedFieldList(src.getClass(), fields);
         for (Field field : fields) {
-
+            System.out.println(field.getName());
             try {
                 field.setAccessible(true);
                 Object fieldVal = field.get(src);
@@ -123,14 +117,18 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
 
     }
 
-    private ArrayList<String> getNestedField(Class<?> klass, ArrayList<String> nameList){
+    private List<String> getNestedField(Class<?> klass){
+        return getNestedFieldList(klass, new ArrayList<>()).stream().map(Field::getName).collect(Collectors.toList());
+    }
+
+     private ArrayList<Field> getNestedFieldList(Class<?> klass, ArrayList<Field> fieldList){
         if (klass.getName() != BaseDocument.class.getName()) {
             for(Field field : klass.getDeclaredFields()) {
-                nameList.add(field.getName());
+                fieldList.add(field);
             }
-            return getNestedField(klass.getSuperclass(), nameList);
+            return getNestedFieldList(klass.getSuperclass(), fieldList);
         }
-        return nameList;
+        return fieldList;
     }
 }
 
