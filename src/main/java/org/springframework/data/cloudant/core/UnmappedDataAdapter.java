@@ -94,7 +94,6 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
         ArrayList<Field> fields = new ArrayList();
         fields = getNestedFieldList(src.getClass(), fields);
         for (Field field : fields) {
-            System.out.println(field.getName());
             try {
                 field.setAccessible(true);
                 Object fieldVal = field.get(src);
