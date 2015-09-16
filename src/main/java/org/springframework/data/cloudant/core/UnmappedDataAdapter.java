@@ -87,7 +87,11 @@ public class UnmappedDataAdapter<T extends BaseDocument> implements JsonSerializ
     @Override
     public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject member = new JsonObject();
-        member.addProperty("doc_type", src.getClass().getSimpleName());
+        if(src instanceof CustomDocType){
+            member.addProperty("doc_type", ((CustomDocType) src).getDocType());
+        }else {
+            member.addProperty("doc_type", src.getClass().getSimpleName());
+        }
         member.addProperty("_id", src.getId());
         member.addProperty("_rev", src.getRevision());
 
