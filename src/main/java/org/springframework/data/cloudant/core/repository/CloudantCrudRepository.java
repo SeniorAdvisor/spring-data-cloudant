@@ -42,7 +42,7 @@ import java.util.List;
  */
 
 
-public abstract class CloudantCrudRepository<T extends BaseDocument, ID extends String> implements PagingAndSortingRepository<T, ID> {
+public abstract class CloudantCrudRepository<T extends BaseDocument, ID extends String> extends AbstractCloudantCrudRepository<T,ID> {
 
     private final Class<T> persistentClass;
 
@@ -54,134 +54,8 @@ public abstract class CloudantCrudRepository<T extends BaseDocument, ID extends 
                 .getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
-    public <S extends T> S update(S s) {
-        template.update(s);
-        return s;
-    }
-
-    public T findById(ID id) {
-        return findOne(id);
-    }
-
     @Override
-    public <S extends T> S save(S s) {
-        template.save(s);
-        return s;
-    }
-
-    @Override
-    public <S extends T> Iterable<S> save(Iterable<S> ses) {
-        ArrayList<S> list = new ArrayList<S>();
-        if(ses != null) {
-            for(S e: ses) {
-                list.add(e);
-            }
-        }
-        return template.save(list);
-    }
-
-    @Override
-    public T findOne(ID id) {
-        T t = (T) template.findById(id, this.persistentClass);
-        return t;
-    }
-
-    @Override
-    public boolean exists(ID id) {
-        try {
-            findOne(id);
-            return true;
-        } catch (NoDocumentException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public Iterable<T> findAll() {
-        return template.queryView(defaultView(), false, true, this.persistentClass);
-    }
-
-    @Override
-    public Iterable<T> findAll(Iterable<ID> ids) {
-        return null;
-    }
-
-    @Override
-    public long count() {
-        return 0;
-    }
-
-    @Override
-    public void delete(ID id) {
-        try {
-            BaseDocument doc = findOne(id);
-            template.remove(doc);
-        } catch (NoDocumentException e) {
-
-        }
-    }
-
-    @Override
-    public void delete(T t) {
-        template.remove(t);
-
-    }
-
-    @Override
-    public void delete(Iterable<? extends T> ts) {
-
-    }
-
-    @Override
-    public void deleteAll() {
-
-    }
-
-    @Override
-    public Iterable<T> findAll(Sort orders) {
-        return template.queryViewAndSort(this.defaultView(), false, false, true, this.persistentClass);
-    }
-
-    abstract public String defaultView();
-    @Override
-    public Page<T> findAll(Pageable pageable) {
-        return findByView(this.defaultView(), null, pageable);
-    }
-
-    public Page<T> findByView(String view_name, String key, Pageable pageable) {
-        ViewResult viewResult = template.queryView(view_name, pageable, this.persistentClass, key);
-        return wrapViewResult(viewResult, pageable);
-    }
-
-    public Iterable<T> findByView(String view_name, Object startKey, Object endKey) {
-        return template.queryView(view_name, true, startKey, endKey, this.persistentClass);
-    }
-
-    public SearchResult<T> search(String indexName, Integer limit, boolean includDocs, String query){
-        return template.search(indexName, limit, includDocs, query, this.persistentClass);
-    }
-
-    public Iterable<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey) {
-        List<T> result = new ArrayList<T>();
-        ViewResult viewResult = template.queryViewByStartKey(view_name, true, this.persistentClass, startKey, endKey);
-        List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();
-        for (int i = 0; i < rows.size(); i++) {
-            T item = rows.get(i).getDoc();
-            item.getUnmappedFields().put("key", rows.get(i).getKey()); // For query from views
-            item.getUnmappedFields().put("value", rows.get(i).getValue());
-            result.add(item);
-        }
-        return result;
-    }
-
-    private PageImpl<T> wrapViewResult(ViewResult viewResult, Pageable pageable) {
-        List<T> result = new ArrayList<T>();
-        List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();
-        for (int i = 0; i < rows.size(); i++) {
-            result.add(rows.get(i).getDoc());
-        }
-
-        PageImpl<T> r = new PageImpl<T>(result, pageable, viewResult.getTotalRows());
-        return r;
+    public CloudantTemplate getTemplate() {
+        return template;
     }
 }
