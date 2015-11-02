@@ -26,6 +26,7 @@ import com.cloudant.client.api.View;
 import com.cloudant.client.api.model.FindByIndexOptions;
 import com.cloudant.client.api.model.ViewResult;
 import org.springframework.data.cloudant.core.model.BaseDocument;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Created by justinsaul on 6/9/15.
@@ -44,7 +45,7 @@ public interface CloudantOperations<T extends BaseDocument> {
 
     List<T> findByIndex(String index, FindByIndexOptions query, Class<T> entityClass);
 
-    List<T> queryView(String view, boolean includeDocs, Object startKey, Object endKey, Class<T> entityClass);
+    List<T> queryView(String view, boolean includeDocs, Object startKey, Object endKey, Pageable pageable, Class<T> entityClass);
 
     boolean exists(String id);
 

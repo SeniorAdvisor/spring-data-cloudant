@@ -150,17 +150,17 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
         return wrapViewResult(viewResult, pageable);
     }
 
-    public Iterable<T> findByView(String view_name, Object startKey, Object endKey) {
-        return getTemplate().queryView(view_name, true, startKey, endKey, this.persistentClass);
+    public Iterable<T> findByView(String view_name, Object startKey, Object endKey, Pageable pageable) {
+        return getTemplate().queryView(view_name, true, startKey, endKey, pageable, this.persistentClass);
     }
 
     public SearchResult<T> search(String indexName, Integer limit, boolean includDocs, String query){
         return getTemplate().search(indexName, limit, includDocs, query, this.persistentClass);
     }
 
-    public Iterable<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey) {
+    public Page<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey, Pageable pageable) {
         List<T> result = new ArrayList<T>();
-        ViewResult viewResult = getTemplate().queryViewByStartKey(view_name, true, this.persistentClass, startKey, endKey);
+        ViewResult viewResult = getTemplate().queryViewByStartKey(view_name, true, this.persistentClass, startKey, endKey, pageable);
         List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();
         for (int i = 0; i < rows.size(); i++) {
             T item = rows.get(i).getDoc();
@@ -168,7 +168,7 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
             item.getUnmappedFields().put("value", rows.get(i).getValue());
             result.add(item);
         }
-        return result;
+        return new PageImpl<T>(result, pageable, viewResult.getTotalRows());
     }
 
     private PageImpl<T> wrapViewResult(ViewResult viewResult, Pageable pageable) {
