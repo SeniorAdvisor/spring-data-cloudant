@@ -131,7 +131,7 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     }
 
     public List<T> queryView(String view, boolean reduce, boolean includeDocs, Class<T> entityClass) {
-        return database.view(view).reduce(reduce).includeDocs(includeDocs).query(entityClass);
+        return database.view(view).descending(true).reduce(reduce).includeDocs(includeDocs).query(entityClass);
     }
 
     // The sorting not work properly
@@ -143,11 +143,11 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
         // We need a class to compose the different query conditions
         if(key == null) {
             return database.view(view).includeDocs(true)
-                    .limit(pageable.getPageSize()).skip(pageable.getOffset())
+                    .limit(pageable.getPageSize()).descending(true).skip(pageable.getOffset())
                     .queryView(String.class, Object.class, entityClass);
         }
         else {
-            return database.view(view).includeDocs(true)
+            return database.view(view).includeDocs(true).descending(true)
                     .limit(pageable.getPageSize()).skip(pageable.getOffset())
                     .key(key)
                     .queryView(String.class, Object.class, entityClass);
