@@ -28,3 +28,5 @@ build/
 spring-data-cloudant.iws
 spring-data-cloudant.iml
 spring-data-cloudant.ipr
+
+.idea/

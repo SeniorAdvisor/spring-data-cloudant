@@ -30,6 +30,10 @@ repositories {
     mavenCentral()
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
 dependencies {
     // Spring Framework
     compile("org.springframework:spring-context-support:$springVersion") {
