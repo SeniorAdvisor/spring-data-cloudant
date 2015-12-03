@@ -32,6 +32,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -148,6 +149,10 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
     public Page<T> findByView(String view_name, String key, Pageable pageable) {
         ViewResult viewResult = getTemplate().queryView(view_name, pageable, this.persistentClass, key);
         return wrapViewResult(viewResult, pageable);
+    }
+
+    public Iterable<T> findByView(String view_name, List<String> keys, boolean descending, boolean reduce, boolean includeDocs) {
+        return getTemplate().findByKeys(view_name, keys, descending, reduce, includeDocs, this.persistentClass);
     }
 
     public Iterable<T> findByView(String view_name, Object startKey, Object endKey, Pageable pageable) {
