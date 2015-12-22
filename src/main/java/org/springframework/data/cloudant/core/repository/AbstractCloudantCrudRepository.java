@@ -32,6 +32,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -70,8 +71,8 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
     @Override
     public <S extends T> Iterable<S> save(Iterable<S> ses) {
         ArrayList<S> list = new ArrayList<S>();
-        if(ses != null) {
-            for(S e: ses) {
+        if (ses != null) {
+            for (S e : ses) {
                 list.add(e);
             }
         }
@@ -141,6 +142,7 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
     }
 
     abstract public String defaultView();
+
     @Override
     public Page<T> findAll(Pageable pageable) {
         return findByView(this.defaultView(), null, pageable);
@@ -159,7 +161,7 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
         return getTemplate().queryView(view_name, true, startKey, endKey, pageable, this.persistentClass);
     }
 
-    public SearchResult<T> search(String indexName, Integer limit, boolean includDocs, String query){
+    public SearchResult<T> search(String indexName, Integer limit, boolean includDocs, String query) {
         return getTemplate().search(indexName, limit, includDocs, query, this.persistentClass);
     }
 
@@ -169,9 +171,11 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
         List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();
         for (int i = 0; i < rows.size(); i++) {
             T item = rows.get(i).getDoc();
-            item.getUnmappedFields().put("key", rows.get(i).getKey()); // For query from views
-            item.getUnmappedFields().put("value", rows.get(i).getValue());
-            result.add(item);
+            if (item != null) {
+                item.getUnmappedFields().put("key", rows.get(i).getKey()); // For query from views
+                item.getUnmappedFields().put("value", rows.get(i).getValue());
+                result.add(item);
+            }
         }
         return new PageImpl<T>(result, pageable, viewResult.getTotalRows());
     }
