@@ -164,9 +164,14 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     }
 
     public ViewResult queryViewByStartKey(String view, boolean includeDocs, Class<T> entityClass, Object[] startKey, Object[] endKey, Pageable pageable) {
-        return database.view(view).startKey(startKey).endKey(endKey).limit(pageable.getPageSize()).skip(pageable.getOffset()).includeDocs(true).queryView(Object.class, Object.class, entityClass);
+        return queryViewByStartKey(view, includeDocs, entityClass, startKey, endKey, pageable, false);
     }
 
+    public ViewResult queryViewByStartKey(String view, boolean includeDocs, Class<T> entityClass, Object[] startKey, Object[] endKey, Pageable pageable, Boolean descending) {
+        return database.view(view).startKey(startKey).endKey(endKey).limit(pageable.getPageSize())
+                .skip(pageable.getOffset()).includeDocs(true).descending(descending)
+                .queryView(Object.class, Object.class, entityClass);
+    }
 
     public SearchResult<T> search(String indexName, Integer limit, boolean includeDocs, String query, Class<T> entityClass){
         return database.search(indexName).limit(limit).includeDocs(includeDocs).querySearchResult(query, entityClass);

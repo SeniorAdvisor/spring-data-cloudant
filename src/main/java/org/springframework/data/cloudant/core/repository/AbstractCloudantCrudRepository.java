@@ -166,16 +166,18 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
     }
 
     public Page<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey, Pageable pageable) {
+        return queryViewByComplexKey(view_name, startKey, endKey, pageable, false);
+    }
+
+    public Page<T> queryViewByComplexKey(String view_name, Object[] startKey, Object[] endKey, Pageable pageable, Boolean descending) {
         List<T> result = new ArrayList<T>();
-        ViewResult viewResult = getTemplate().queryViewByStartKey(view_name, true, this.persistentClass, startKey, endKey, pageable);
+        ViewResult viewResult = getTemplate().queryViewByStartKey(view_name, true, this.persistentClass, startKey, endKey, pageable, descending);
         List<ViewResult<String, String, T>.Rows> rows = viewResult.getRows();
         for (int i = 0; i < rows.size(); i++) {
             T item = rows.get(i).getDoc();
-            if (item != null) {
-                item.getUnmappedFields().put("key", rows.get(i).getKey()); // For query from views
-                item.getUnmappedFields().put("value", rows.get(i).getValue());
-                result.add(item);
-            }
+            item.getUnmappedFields().put("key", rows.get(i).getKey()); // For query from views
+            item.getUnmappedFields().put("value", rows.get(i).getValue());
+            result.add(item);
         }
         return new PageImpl<T>(result, pageable, viewResult.getTotalRows());
     }
