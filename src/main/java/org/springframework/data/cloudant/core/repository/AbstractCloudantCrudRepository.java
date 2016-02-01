@@ -153,6 +153,10 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
         return wrapViewResult(viewResult, pageable);
     }
 
+    public Iterable<T> findByView(String view_name, Object[] key, boolean descending, boolean reduce, boolean includeDocs) {
+        return getTemplate().findByKey(view_name, key, descending, reduce, includeDocs, this.persistentClass);
+    }
+
     public Iterable<T> findByView(String view_name, List<String> keys, boolean descending, boolean reduce, boolean includeDocs) {
         return getTemplate().findByKeys(view_name, keys, descending, reduce, includeDocs, this.persistentClass);
     }

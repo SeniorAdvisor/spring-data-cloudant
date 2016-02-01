@@ -130,6 +130,10 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
         return database.view(view).descending(descending).keys(keys).reduce(reduce).includeDocs(includeDocs).query(entityClass);
     }
 
+    public List<T> findByKey(String view, Object[] key, boolean descending,  boolean reduce, boolean includeDocs, Class<T> entityClass) {
+        return database.view(view).descending(descending).key(key).reduce(reduce).includeDocs(includeDocs).query(entityClass);
+    }
+
     public Page<T> queryView(String view, Pageable page, boolean includeDocs, Class<T> entityClass) {
         return database.view(view).queryPage(page.getPageSize(), null, entityClass);
     }
