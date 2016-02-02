@@ -19,6 +19,7 @@ import java.util.Locale;
 public class DateTimeDataAdapter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime> {
     private final DateTimeFormatter fmt = ISODateTimeFormat.dateTime().withZoneUTC();
     private static final String[] DATE_FORMATS = new String[] {
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
             "yyyy-MM-dd'T'HH:mm:ssZ",
             "yyyy-MM-dd HH:mm:ss Z",
             "yyyy-MM-dd HH:mm:ss z"
