@@ -53,7 +53,7 @@ dependencies {
     }
 
     // Cloudant
-    compile group: 'com.cloudant', name: 'cloudant-client', version:'1.0.1'
+    compile group: 'com.cloudant', name: 'cloudant-client', version:'1.2.3'
 
     // Spring Cloud
     compile(group: 'org.springframework.cloud', name: 'spring-cloud-config-client', version:'1.0.1.RELEASE') {
