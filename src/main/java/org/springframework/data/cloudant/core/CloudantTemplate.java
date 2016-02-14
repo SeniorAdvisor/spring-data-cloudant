@@ -51,13 +51,24 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     private Database database;
     private final Logger logger = LoggerFactory.getLogger(CloudantTemplate.class);
 
+    // the constructor using false as default in create parameter
+    public CloudantTemplate(final ICloudantConnector dbConnector){
+        this.client = dbConnector.getClient();
+        this.database = this.client.database(dbConnector.getDbName(), false);
+    }
+
+    // the constructor using false as default in create parameter
+    public CloudantTemplate(final CloudantClient client, final String databaseName) {
+        this.client = client;
+        this.database = this.client.database(databaseName, false);
+    }
+
     public CloudantTemplate(final ICloudantConnector dbConnector, Boolean create){
         this.client = dbConnector.getClient();
         this.database = this.client.database(dbConnector.getDbName(), create);
     }
     public CloudantTemplate(final CloudantClient client, final String databaseName, Boolean create) {
         this.client = client;
-
         this.database = this.client.database(databaseName, create);
     }
 
