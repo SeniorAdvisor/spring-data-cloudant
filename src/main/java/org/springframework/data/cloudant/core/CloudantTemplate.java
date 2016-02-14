@@ -19,26 +19,24 @@
 
 package org.springframework.data.cloudant.core;
 
-import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
+import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.model.*;
+
+import com.cloudant.client.api.model.SearchResult;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.data.cloudant.config.ICloudantConnector;
-import org.springframework.data.cloudant.core.mapping.event.AfterSaveEvent;
-import org.springframework.data.cloudant.core.mapping.event.BeforeSaveEvent;
-import org.springframework.data.cloudant.core.mapping.event.CloudantMappingEvent;
+import org.springframework.data.cloudant.core.mapping.event.*;
 import org.springframework.data.cloudant.core.model.BaseDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Created by justinsaul on 6/9/15.
@@ -51,14 +49,14 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     private Database database;
     private final Logger logger = LoggerFactory.getLogger(CloudantTemplate.class);
 
-    public CloudantTemplate(final ICloudantConnector dbConnector, Boolean create){
+    public CloudantTemplate(final ICloudantConnector dbConnector){
         this.client = dbConnector.getClient();
-        this.database = this.client.database(dbConnector.getDbName(), create);
+        this.database = this.client.database(dbConnector.getDbName(), true);
     }
-    public CloudantTemplate(final CloudantClient client, final String databaseName, Boolean create) {
+    public CloudantTemplate(final CloudantClient client, final String databaseName) {
         this.client = client;
 
-        this.database = this.client.database(databaseName, create);
+        this.database = this.client.database(databaseName, true);
     }
 
     @Override
