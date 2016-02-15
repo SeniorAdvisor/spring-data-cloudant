@@ -19,24 +19,26 @@
 
 package org.springframework.data.cloudant.core;
 
-import com.cloudant.client.api.Database;
 import com.cloudant.client.api.CloudantClient;
+import com.cloudant.client.api.Database;
 import com.cloudant.client.api.model.*;
-
-import com.cloudant.client.api.model.SearchResult;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.data.cloudant.config.ICloudantConnector;
-import org.springframework.data.cloudant.core.mapping.event.*;
+import org.springframework.data.cloudant.core.mapping.event.AfterSaveEvent;
+import org.springframework.data.cloudant.core.mapping.event.BeforeSaveEvent;
+import org.springframework.data.cloudant.core.mapping.event.CloudantMappingEvent;
 import org.springframework.data.cloudant.core.model.BaseDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by justinsaul on 6/9/15.
@@ -49,14 +51,25 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
     private Database database;
     private final Logger logger = LoggerFactory.getLogger(CloudantTemplate.class);
 
+    // the constructor using false as default in create parameter
     public CloudantTemplate(final ICloudantConnector dbConnector){
         this.client = dbConnector.getClient();
-        this.database = this.client.database(dbConnector.getDbName(), true);
+        this.database = this.client.database(dbConnector.getDbName(), false);
     }
+
+    // the constructor using false as default in create parameter
     public CloudantTemplate(final CloudantClient client, final String databaseName) {
         this.client = client;
+        this.database = this.client.database(databaseName, false);
+    }
 
-        this.database = this.client.database(databaseName, true);
+    public CloudantTemplate(final ICloudantConnector dbConnector, Boolean create){
+        this.client = dbConnector.getClient();
+        this.database = this.client.database(dbConnector.getDbName(), create);
+    }
+    public CloudantTemplate(final CloudantClient client, final String databaseName, Boolean create) {
+        this.client = client;
+        this.database = this.client.database(databaseName, create);
     }
 
     @Override
