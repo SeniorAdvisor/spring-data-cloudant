@@ -175,6 +175,10 @@ public class CloudantTemplate<T extends BaseDocument> implements CloudantOperati
         }
     }
 
+    public List<T> queryViewGrouped(String view, boolean includeDocs, boolean group, Object startKey, Object endKey, Pageable pageable, Class<T> entityClass) {
+        return database.view(view).startKey(startKey).endKey(endKey).limit(pageable.getPageSize()).skip(pageable.getOffset()).group(group).includeDocs(includeDocs).query(entityClass);
+    }
+
     @Override
     public List<T> queryView(String view, boolean includeDocs, Object startKey, Object endKey, Pageable pageable, Class<T> entityClass) {
         return database.view(view).startKey(startKey).endKey(endKey).limit(pageable.getPageSize()).skip(pageable.getOffset()).includeDocs(includeDocs).query(entityClass);

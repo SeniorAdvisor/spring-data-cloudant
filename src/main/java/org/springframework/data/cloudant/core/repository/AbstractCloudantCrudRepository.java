@@ -31,10 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by kevin on 6/15/15.
@@ -102,7 +99,10 @@ public abstract class AbstractCloudantCrudRepository<T extends BaseDocument, ID 
 
     @Override
     public Iterable<T> findAll(Iterable<ID> ids) {
-        return null;
+        List<String> idList = new ArrayList<>();
+        ids.forEach(id -> { idList.add(id); });
+
+        return this.getTemplate().findByKeys(defaultView(), idList, false, false, true, this.persistentClass);
     }
 
     @Override
