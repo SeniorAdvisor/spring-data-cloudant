@@ -64,4 +64,3 @@ Spring Data Cloudant Adapter
    db: CLOUDANT_DB_NAME
  ```
 
-test
